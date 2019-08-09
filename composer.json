@@ -1,0 +1,30 @@
+{
+    "name": "david-kurniawan/omnipay-faspay",
+    "type": "library",
+    "description": "Faspay driver for the Omnipay payment processing library",
+    "keywords": [
+        "gateway",
+        "faspay",
+        "merchant",
+        "omnipay",
+        "pay",
+        "payment"
+    ],
+    "homepage": "https://github.com/david-kurniawan/omnipay-faspay",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "David Kurniawan",
+            "email": "jatinangorservice@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": { "Omnipay\\Faspay\\" : "src/" }
+    },
+    "require": {
+        "omnipay/common": "^2.0||^3.0"
+    },
+    "require-dev": {
+        "omnipay/tests": "^2.0||^3.0"
+    }
+}
