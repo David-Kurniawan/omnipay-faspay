@@ -21,6 +21,7 @@ class GatewayTest extends GatewayTestCase
     public function testChannel()
     {
         $response = $this->gateway->channel()->send();
+
         $this->assertTrue($response->isSuccessful());
     }
 
@@ -36,6 +37,7 @@ class GatewayTest extends GatewayTestCase
             $this->gateway->setParameter($key, $value);
         }
         $response = $this->gateway->purchase()->send();
+
         $this->assertTrue($response->isSuccessful());
     }
     

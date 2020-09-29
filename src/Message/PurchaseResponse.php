@@ -11,21 +11,13 @@ use Omnipay\Common\Message\RequestInterface;
  */
 class PurchaseResponse extends AbstractResponse
 {
-    const DEV_URL = 'https://dev.faspay.co.id/pws/100003/0830000010100000/';
-    const LIVE_URL = 'https://web.faspay.co.id/pws/100003/2830000010100000/';
-
-    public function __construct(RequestInterface $request, $data, $userId, $password, $merchantId, $testMode)
+    public function __construct(RequestInterface $request, $data)
     {
         parent::__construct($request, $data);
         
         if (!is_array($data)) {
             $this->data = json_decode(trim($data), true);
         }
-
-        $this->userId = $userId;
-        $this->password = $password;
-        $this->merchantId = $merchantId;
-        $this->testMode = $testMode;
     }
 
     public function isSuccessful()
@@ -51,10 +43,8 @@ class PurchaseResponse extends AbstractResponse
 
     public function getRedirectUrl()
     {
-        if ($this->isSuccessful()) {
-            $url = $this->getEndpoint().$this->createSignature().'?'.$this->buildRedirectQuery();
-
-            return $url;
+        if ($this->isSuccessful() && isset($this->data['redirect_url'])) {
+            return $this->data['redirect_url'];
         }
 
         return;
@@ -68,29 +58,5 @@ class PurchaseResponse extends AbstractResponse
     public function getRedirectData()
     {
         return $this->data;
-    }
-
-    public function createSignature()
-    {
-        return sha1(md5(($this->userId.$this->password.$this->data['bill_no'])));
-    }
-
-    public function buildRedirectQuery()
-    {
-        $datas = array();
-        $datas['trx_id'] = $this->data['trx_id'];
-        $datas['merchant_id'] = $this->merchantId;
-        $datas['bill_no'] = $this->data['bill_no'];
-
-        return http_build_query($datas);
-    }
-
-    public function getEndpoint()
-    {
-        if ($this->testMode) {
-            return self::DEV_URL;
-        }
-
-        return self::LIVE_URL;
     }
 }

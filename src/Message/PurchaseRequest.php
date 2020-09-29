@@ -17,7 +17,7 @@ class PurchaseRequest extends AbstractRequest
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);                              
         $httpResponse = curl_exec($ch);
 
-        return $this->response = new PurchaseResponse($this, $httpResponse, $this->getUserId(), $this->getPassword(), $this->getMerchantId(), $this->getTestMode());
+        return $this->response = new PurchaseResponse($this, $httpResponse);
     }
 
     public function getData()
