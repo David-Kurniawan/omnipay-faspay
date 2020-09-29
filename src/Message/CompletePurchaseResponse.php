@@ -13,8 +13,11 @@ class CompletePurchaseResponse extends AbstractResponse
 {
     public function __construct(RequestInterface $request, $data)
     {
-        $this->data = $data;
-        return;
+        parent::__construct($request, $data);
+        
+        if (!is_array($data)) {
+            $this->data = json_decode(trim($data), true);
+        }
     }
 
     public function isSuccessful()

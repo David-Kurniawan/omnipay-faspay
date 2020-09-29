@@ -9,18 +9,24 @@ namespace Omnipay\Faspay\Message;
  */
 class ChannelRequest extends AbstractRequest
 {
+    public function sendData($data)
+    {
+        $ch = curl_init($this->getEndpoint());
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);                              
+        $httpResponse = curl_exec($ch);
+
+        return $this->response = new ChannelResponse($this, $httpResponse);
+    }
+
     public function getData()
     {
-        $this->guardParameters();
+        $this->channelGuardParameters();
         $data = $this->getDefaultParameters();
 
         return $data;
-    }
-
-    public function sendData($data)
-    {
-        $httpResponse = $this->sendRequest($data);
-        return $this->response = new ChannelResponse($this, $httpResponse);
     }
 
     public function getEndpoint()

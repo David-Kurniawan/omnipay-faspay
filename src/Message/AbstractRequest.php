@@ -4,11 +4,8 @@ namespace Omnipay\Faspay\Message;
 
 abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 {
-    protected $isProduction = false;
     protected $liveEndpoint = 'https://web.faspay.co.id';
     protected $testEndpoint = 'https://dev.faspay.co.id';
-    protected $userid = 'YOUR_USER_ID';
-    protected $password = 'YOUR_PASSWORD';
 
     public function getMerchant()
     {
@@ -28,6 +25,26 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
     public function setMerchantId($merchantId)
     {
         return $this->setParameter('merchant_id', $merchantId);
+    }
+
+    public function getUserId()
+    {
+        return $this->getParameter('user_id');
+    }
+
+    public function setUserId($userId)
+    {
+        return $this->setParameter('user_id', $userId);
+    }
+
+    public function getPassword()
+    {
+        return $this->getParameter('password');
+    }
+
+    public function setPassword($password)
+    {
+        return $this->setParameter('password', $password);
     }
 
     public function getSignature()
@@ -399,11 +416,24 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
         );
     }
 
+    protected function channelGuardParameters()
+    {
+        $this->validate(
+            'merchant',
+            'merchant_id',
+            'user_id',
+            'password',
+            'signature'
+        );
+    }
+
     protected function purchaseGuardParameters()
     {
         $this->validate(
             'merchant',
             'merchant_id',
+            'user_id',
+            'password',
             'signature',
             'bill_no',
             'bill_date',
@@ -481,37 +511,19 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
     protected function createSignature($type, $billno = null, $status_code = null)
     {
         if ($type === 'channel') {
-            return sha1(md5($this->userid.$this->password));
+            return sha1(md5($this->getUserId().$this->getPassword()));
         } elseif ($type === 'payment') {
-            return sha1(md5($this->userid.$this->password.$billno));
+            return sha1(md5($this->getUserId().$this->getPassword().$billno));
         }
 
         return null;
     }
 
-    public function sendRequest($data)
-    {
-        $ch = curl_init($this->getEndpoint());
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);                              
-        $result = curl_exec($ch);
-        $result = json_decode($result, true);
-        
-        return $result;
-    }
-
-    public function getHttpMethod()
-    {
-        return 'POST';
-    }
-
     public function getEndpoint()
     {
-        if ($this->isProduction) {
-            return $this->liveEndpoint;
+        if ($this->getTestMode()) {
+            return $this->testEndpoint;
         }
-        return $this->testEndpoint;
+        return $this->liveEndpoint;
     }
 }

@@ -40,6 +40,26 @@ class Gateway extends AbstractGateway
         return $this->setParameter('merchant_id', $merchantId);
     }
 
+    public function getUserId()
+    {
+        return $this->getParameter('user_id');
+    }
+
+    public function setUserId($userId)
+    {
+        return $this->setParameter('user_id', $userId);
+    }
+
+    public function getPassword()
+    {
+        return $this->getParameter('password');
+    }
+
+    public function setPassword($password)
+    {
+        return $this->setParameter('password', $password);
+    }
+
     public function getSignature()
     {
         return $this->getParameter('signature');
